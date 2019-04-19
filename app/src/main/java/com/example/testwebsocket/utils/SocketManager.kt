@@ -1,9 +1,9 @@
-package com.example.testwebsocket.socket
+package com.example.testwebsocket.utils
 
-import android.content.Context
 import com.example.testwebsocket.applySchedulers
 import com.example.testwebsocket.event.MessageEvent
 import com.example.testwebsocket.schedulersFlowableTransformer
+import com.example.testwebsocket.socket.*
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
@@ -18,7 +18,8 @@ object SocketManager {
 
     private val observers = CopyOnWriteArrayList<Observer<MessageEvent>>()
     private var mStompClient: SocketClient? = null
-    private var intervalGen: IntervalGenerator = IntervalGenerator()
+    private var intervalGen: IntervalGenerator =
+        IntervalGenerator()
     private var timer: Timer? = Timer()
     private var retry: Boolean = true
 
@@ -32,7 +33,7 @@ object SocketManager {
         if (token.isNullOrEmpty()) {
             Timber.e("----------->Action change token")
             //token = AppUtils.drjoyApp().appComponent().makeOAuthRepos().getLocalOAuthToken().blockingSingle()
-            token="token"
+            token ="token"
         }
         tryConnect()
     }
@@ -105,7 +106,9 @@ object SocketManager {
         Timber.e("------------> Stomp try connecting")
         mStompClient?.disconnect()
         retry = true
-        mStompClient = SocketClient(WebSocketsConnectionProvider(url))
+        mStompClient = SocketClient(
+            WebSocketsConnectionProvider(url)
+        )
         typeStatusSocket = null
         mStompClient?.let {
             it.onMessage()
@@ -114,7 +117,11 @@ object SocketManager {
                     notifyEvent(MessageEvent.fromJson(topicMessage))
                 }, Timber::e)
 
-            it.connect(SocketHeader("Auth-Token", token!!), lifecycleCallback = {
+            it.connect(
+                SocketHeader(
+                    "Auth-Token",
+                    token!!
+                ), lifecycleCallback = {
                 Timber.e(it.name)
                 typeStatusSocket = it
                 when (it) {
@@ -173,7 +180,8 @@ object SocketManager {
     }
 
     fun getStatusSocket(): LifecycleEvent.Type {
-        return typeStatusSocket ?: LifecycleEvent.Type.CLOSED
+        return typeStatusSocket
+            ?: LifecycleEvent.Type.CLOSED
     }
 
     fun isConnected(): Boolean {

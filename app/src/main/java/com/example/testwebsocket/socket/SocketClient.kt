@@ -1,6 +1,7 @@
 package com.example.testwebsocket.socket
 
 import android.util.Log
+import com.example.testwebsocket.utils.SocketCommon
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -8,7 +9,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 open class SocketClient(private val mConnectionProvider: ConnectionProvider) {

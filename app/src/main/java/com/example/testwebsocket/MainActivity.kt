@@ -3,7 +3,7 @@ package com.example.testwebsocket
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
-import com.example.testwebsocket.socket.SocketManager
+import com.example.testwebsocket.utils.SocketManager
 
 class MainActivity : AppCompatActivity() {
 

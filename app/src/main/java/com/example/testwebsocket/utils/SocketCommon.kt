@@ -1,4 +1,4 @@
-package com.example.testwebsocket.socket
+package com.example.testwebsocket.utils
 
 object SocketCommon {
     const val CONNECT = "CONNECT"

@@ -4,17 +4,16 @@ import android.util.Log
 import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
-import org.java_websocket.exceptions.InvalidDataException
-import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.handshake.ServerHandshake
-import timber.log.Timber
 import java.net.URI
-import java.nio.charset.Charset
 import java.util.*
 import javax.net.ssl.SSLContext
 
-internal class WebSocketsConnectionProvider constructor(private val mUri: String, var mConnectHttpHeaders: MutableMap<String, String> = mutableMapOf()) : AbstractConnectionProvider() {
+internal class WebSocketsConnectionProvider constructor(
+    private val mUri: String,
+    var mConnectHttpHeaders: MutableMap<String, String> = mutableMapOf()
+) : AbstractConnectionProvider() {
     override val socket: Any?
         get() = mWebSocketClient
 
@@ -32,8 +31,15 @@ internal class WebSocketsConnectionProvider constructor(private val mUri: String
         mWebSocketClient = object : WebSocketClient(URI.create(mUri), Draft_6455(), mConnectHttpHeaders, 0) {
 
             //            @Throws(InvalidDataException::class)
-            override fun onWebsocketHandshakeReceivedAsClient(conn: WebSocket?, request: ClientHandshake?, response: ServerHandshake) {
-                Log.d(TAG, "onWebsocketHandshakeReceivedAsClient with response: " + response.httpStatus + " " + response.httpStatusMessage)
+            override fun onWebsocketHandshakeReceivedAsClient(
+                conn: WebSocket?,
+                request: ClientHandshake?,
+                response: ServerHandshake
+            ) {
+                Log.d(
+                    TAG,
+                    "onWebsocketHandshakeReceivedAsClient with response: " + response.httpStatus + " " + response.httpStatusMessage
+                )
                 mServerHandshakeHeaders = TreeMap()
                 val keys = response.iterateHttpFields()
                 while (keys.hasNext()) {
@@ -43,7 +49,10 @@ internal class WebSocketsConnectionProvider constructor(private val mUri: String
             }
 
             override fun onOpen(handshakeData: ServerHandshake) {
-                Log.d(TAG, "onOpen with handshakeData: " + handshakeData.httpStatus + " " + handshakeData.httpStatusMessage)
+                Log.d(
+                    TAG,
+                    "onOpen with handshakeData: " + handshakeData.httpStatus + " " + handshakeData.httpStatusMessage
+                )
                 val openEvent = LifecycleEvent(LifecycleEvent.Type.OPENED)
                 openEvent.handshakeResponseHeaders = mServerHandshakeHeaders!!
                 emitLifecycleEvent(openEvent)
@@ -55,6 +64,7 @@ internal class WebSocketsConnectionProvider constructor(private val mUri: String
             }
 
             override fun onClose(code: Int, reason: String, remote: Boolean) {
+
                 Log.d(TAG, "onClose: code=$code reason=$reason remote=$remote")
                 haveConnection = false
                 emitLifecycleEvent(LifecycleEvent(LifecycleEvent.Type.CLOSED))
@@ -66,24 +76,24 @@ internal class WebSocketsConnectionProvider constructor(private val mUri: String
             }
 
 
-            private val messBuf = StringBuilder()
-            @Suppress("OverridingDeprecatedMember")
-            override fun onWebsocketMessageFragment(conn: WebSocket?, frame: Framedata?) {
-                Log.d(TAG, "onWebsocketMessageFragment")
-                try {
-                    var s = String(frame?.payloadData!!.array(), Charset.forName("UTF-8"))
-                    s = s.trim()
-                    messBuf.append(s)
-                    if (s.contains("\u0000")) {
-                        emitMessage(messBuf.toString())
-                        messBuf.setLength(0)
-                    }
-                } catch (e: InvalidDataException) {
-                    Timber.e("xyz--onWebsocketMessageFragment--" + e.message)
-                    e.printStackTrace()
-                }
-
-            }
+//            private val messBuf = StringBuilder()
+//            @Suppress("OverridingDeprecatedMember")
+//            override fun onWebsocketMessageFragment(conn: WebSocket?, frame: Framedata?) {
+//                Log.d(TAG, "onWebsocketMessageFragment")
+//                try {
+//                    var s = String(frame?.payloadData!!.array(), Charset.forName("UTF-8"))
+//                    s = s.trim()
+//                    messBuf.append(s)
+//                    if (s.contains("\u0000")) {
+//                        emitMessage(messBuf.toString())
+//                        messBuf.setLength(0)
+//                    }
+//                } catch (e: InvalidDataException) {
+//                    Timber.e("xyz--onWebsocketMessageFragment--" + e.message)
+//                    e.printStackTrace()
+//                }
+//
+//            }
         }
 
         if (mUri.startsWith("wss")) {
@@ -97,7 +107,7 @@ internal class WebSocketsConnectionProvider constructor(private val mUri: String
             }
 
         }
-
+        mWebSocketClient?.connectionLostTimeout = 0
         mWebSocketClient?.connect()
         haveConnection = true
     }

@@ -9,7 +9,7 @@ open class MessageEvent {
         fun fromJson(json: String?): MessageEvent {
             val tmp = GsonBuilder().create().fromJson(json, MessageEvent::class.java)
             when (tmp.type) {
-//                "room_created" -> return GsonBuilder().create().fromJson(json, RoomCreated::class.java)
+                "newTicket" -> return GsonBuilder().create().fromJson(json, NewTicket::class.java)
 //                "room_deleted" -> return GsonBuilder().create().fromJson(json, RoomDeleted::class.java)
 //                "room_joined" -> return GsonBuilder().create().fromJson(json, RoomJoined::class.java)
 //                "user_invited" -> return GsonBuilder().create().fromJson(json, UserInvited::class.java)
@@ -39,7 +39,7 @@ open class MessageEvent {
         }
     }
 
-    @SerializedName("type")
+    @SerializedName("act")
     open var type: String? = commandName()
 
     @SerializedName("request_id")
