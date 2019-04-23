@@ -63,8 +63,11 @@ open class SocketClient(private val mConnectionProvider: ConnectionProvider) {
                 when (lifecycleEvent.type) {
                     LifecycleEvent.Type.OPENED -> {
                         Log.d(TAG, _headers.value)
-                        mConnectionProvider.send("{\"act\":\"login\",\"user\":\"longnvneo\"}")
-                            .subscribe()
+//                        mConnectionProvider.send("{\"act\":\"login\",\"user\":\"longnvneo\"}")
+//                            .subscribe()
+
+                        isConnected = true
+                        isConnecting = false
                     }
 
                     LifecycleEvent.Type.CLOSED -> {

@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 object SocketManager {
     var token: String? = null
     val url: String by lazy {
-        return@lazy "ws://10.252.30.1:5555"
+        return@lazy "ws://10.252.30.1:8092/WebSocket3/realtime/"
     }
 
     private val observers = CopyOnWriteArrayList<Observer<MessageEvent>>()
@@ -33,7 +33,7 @@ object SocketManager {
         if (token.isNullOrEmpty()) {
             Timber.e("----------->Action change token")
             //token = AppUtils.drjoyApp().appComponent().makeOAuthRepos().getLocalOAuthToken().blockingSingle()
-            token ="token"
+            token ="*64561A7113D9B33435A9CACA960DF65C7007C6B1"
         }
         tryConnect()
     }
@@ -49,7 +49,7 @@ object SocketManager {
         Timber.e("----------->Action Close")
         socketStatus.onNext(LifecycleEvent.Type.CLOSED)
         cancelTimer()
-        token = "tocken"
+        token = ""
         retry = false
         mStompClient?.disconnect()
         intervalGen.reset()
@@ -107,7 +107,7 @@ object SocketManager {
         mStompClient?.disconnect()
         retry = true
         mStompClient = SocketClient(
-            WebSocketsConnectionProvider(url)
+            WebSocketsConnectionProvider( "$url$token")
         )
         typeStatusSocket = null
         mStompClient?.let {
